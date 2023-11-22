@@ -1,42 +1,24 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# @Time    : 2020/10/15 16:24
-# @Author  : CoderCharm
-# @File    : main.py
-# @Software: PyCharm
-# @Github  : github/CoderCharm
-# @Email   : wg_python@163.com
-# @Desc    :
-
-"""
-pip install uvicorn
-# 推荐启动方式 main指当前文件名字 app指FastAPI实例化后对象名称
-uvicorn main:app --host=127.0.0.1 --port=8010 --reload
-
-类似flask 工厂模式创建
-# 生产启动命令 去掉热重载 (可用supervisor托管后台运行)
-
-在main.py同文件下下启动
-uvicorn main:app --host=127.0.0.1 --port=8010 --workers=4
-
-# 同样可以也可以配合gunicorn多进程启动  main.py同文件下下启动 默认127.0.0.1:8000端口
-gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker -b 127.0.0.1:8020
-
-"""
 
 
-from core.server import create_app
+from fastapi import Depends, FastAPI, Header, HTTPException
+from tortoise.contrib.fastapi import register_tortoise
+from config import TORTOISE_ORM
+from routers.api import user
+from passlib.context import CryptContext
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+app = FastAPI()
+
+register_tortoise(
+    app=app,
+    config=TORTOISE_ORM,
+    # generate_schemas=True,  # 如果数据库为空，则自动生成对应表单，生产环境不要开
+    # add_exception_handlers=True,  # 生产环境不要开，会泄露调试信息
+)
+async def get_token_header(x_token: str = Header(...)):
+    if x_token != "fake-super-secret-token":
+        raise HTTPException(status_code=400, detail="X-Token header invalid")
 
 
-app = create_app()
-
-if __name__ == "__main__":
-    import uvicorn
-
-    # 输出所有的路由
-    for route in app.routes:
-        if hasattr(route, "methods"):
-            print({'path': route.path, 'name': route.name, 'methods': route.methods})
-
-    uvicorn.run(app='main:app', host="127.0.0.1", port=8010, reload=True, debug=True)
-
+app.include_router(user.router, prefix="/user",tags=["登录"])
