@@ -6,7 +6,7 @@ from pydantic import BaseModel, EmailStr, AnyHttpUrl
 class UserInfoBase(BaseModel):
     '"id","username",  "is_allow","created_at","updated_at","Expire_at"'
     id: int
-    username: str=None
+    username: int=None
     is_allow: bool=False
     created_at: Optional[datetime]=None
     Expire_at: Optional[datetime]=None

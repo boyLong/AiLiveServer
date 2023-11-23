@@ -55,7 +55,7 @@ async def login_for_access_token(user: UserLoginBase):
     return {"status":STATUS.SUCCESS,"msg": "登录成功","token": access_token}
 
 
-@router.get("/info", dependencies=[Depends(check_jwt_token)], response_model_include=["status","msg","user"])
+@router.get("/info", dependencies=[Depends(check_jwt_token)],response_model=ResponseBase, response_model_include=["status","msg","user"])
 async def get_projects(*, user: UserInfoBase = Depends(check_jwt_token)):
     print(user)
     return {"status": STATUS.SUCCESS, "msg":"成功", "user": user}
