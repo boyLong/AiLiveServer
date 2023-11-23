@@ -59,7 +59,7 @@ async def check_jwt_token(token: Optional[str] = Header("")):
         payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
         username: str = payload.get("sub")
         # 通过解析得到的username,获取用户信息,并返回
-        return await UserModel.filter(username=username).first().values("id","username",  "is_allow","created_at","updated_at","Expire_at")
+        return await UserModel.filter(username=username).first().values("id","username",  "is_allow","created_at","Expire_at")
  
     except Exception as e:
         print(e)

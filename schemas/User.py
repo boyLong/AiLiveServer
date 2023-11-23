@@ -17,10 +17,11 @@ from pydantic import BaseModel, EmailStr, AnyHttpUrl
 
 
 # Shared properties
-class UserBase(BaseModel):
+class UserLoginBase(BaseModel):
     username: int = None
     password: str = None
 
 
 class TokenModel(BaseModel):
     token: str = None
+
