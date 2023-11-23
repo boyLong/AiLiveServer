@@ -21,4 +21,4 @@ async def get_token_header(x_token: str = Header(...)):
         raise HTTPException(status_code=400, detail="X-Token header invalid")
 
 
-app.include_router(user.router, prefix="/user",tags=["用户"])
+app.include_router(user.router, prefix="/api/user",tags=["用户"])
