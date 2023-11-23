@@ -11,14 +11,13 @@ class UserInfoBase(BaseModel):
     created_at: Optional[datetime]=None
     Expire_at: Optional[datetime]=None
 
-class TokenBase(BaseModel):
-    token: str
 
 # Shared properties
 class ResponseBase(BaseModel):
-    data: Union[None,UserInfoBase,TokenBase]
+    data: dict=None
     status: int = None
     msg: str = "成功"
-
+    token: str=None
+    user: UserInfoBase=None
 
 

@@ -1,7 +1,7 @@
 from fastapi import APIRouter,Depends
 from datetime import timedelta
 from schemas.User import UserLoginBase
-from schemas.Response import ResponseBase,TokenBase,UserInfoBase
+from schemas.Response import ResponseBase,UserInfoBase
 from config import ACCESS_TOKEN_EXPIRE_MINUTES,STATUS
 from common.auth import create_access_token,verify_password,get_password_hash,check_jwt_token
 from models.user import UserModel
@@ -39,11 +39,11 @@ async def register(user: UserLoginBase):
 
 
 
-@router.post("/login",response_model=ResponseBase,response_model_include=["status","msg","data"])
+@router.post("/login",response_model=ResponseBase,response_model_include=["status","msg", "token"])
 async def login_for_access_token(user: UserLoginBase):
     user =await check_user(user.username, user.password)
     if not user:
-        return {"status":STATUS.ERROR,"msg": "用户名密码错误","data": {"token":''}} 
+        return {"status":STATUS.ERROR,"msg": "用户名密码错误","token": ''} 
    
     # 过期时间
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -51,14 +51,14 @@ async def login_for_access_token(user: UserLoginBase):
     access_token = create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
-    
-    return {"status":STATUS.SUCCESS,"msg": "登录成功","data":{"token":access_token}}
+
+    return {"status":STATUS.SUCCESS,"msg": "登录成功","token": access_token}
 
 
-@router.get("/info", dependencies=[Depends(check_jwt_token)], response_model_include=["status","msg","data"])
+@router.get("/info", dependencies=[Depends(check_jwt_token)], response_model_include=["status","msg","user"])
 async def get_projects(*, user: UserInfoBase = Depends(check_jwt_token)):
     print(user)
-    return {"status": STATUS.SUCCESS, "msg":"成功", "data": user}
+    return {"status": STATUS.SUCCESS, "msg":"成功", "user": user}
 
 
 
