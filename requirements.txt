@@ -1,0 +1,7 @@
+fastapi==0.104.1
+passlib==1.7.4
+pydantic==2.5.2
+PyJWT==2.8.0
+PyJWT==2.8.0
+Requests==2.31.0
+tortoise==0.1.1
