@@ -13,4 +13,9 @@ class GroupSchemas(pydantic_model_creator(GroupModel)):
 
 
 class GroupReqSchemas(BaseModel):
+
     name: str
+
+class GroupDelReqSchemas(BaseModel):
+    
+    id: int
