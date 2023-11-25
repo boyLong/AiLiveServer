@@ -74,8 +74,9 @@ async def check_jwt_token(token: Optional[str] = Header("")):
         )
     username: str = payload.get("sub")
     device_id: str = payload.get("device_id")
-    
+    print
     if device_id != device_info.get(username):
+        print(device_id,device_info)
         raise HTTPException(
             status_code=401,
             detail={

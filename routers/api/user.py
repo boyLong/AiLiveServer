@@ -1,6 +1,6 @@
 from fastapi import APIRouter,Depends
 from datetime import timedelta
-from schemas.User import UserLoginBase
+from schemas.User import UserLoginBase,UserRegisterBase
 from schemas.Response import ResponseBase,UserInfoBase
 from config import ACCESS_TOKEN_EXPIRE_MINUTES,STATUS
 from common.auth import create_access_token,verify_password,get_password_hash,check_jwt_token
@@ -22,7 +22,7 @@ async def check_user(username, password,):
 
 
 @router.post("/register",response_model=ResponseBase,response_model_include=["status","msg"])
-async def register(user: UserLoginBase):
+async def register(user: UserRegisterBase):
     """
     
     返回字段

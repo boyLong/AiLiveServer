@@ -18,10 +18,10 @@ CREATE TABLE IF NOT EXISTS `replytagmodel` (
     `id` INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `tag` VARCHAR(255) NOT NULL,
     `category` VARCHAR(255) NOT NULL,
-    `word` VARCHAR(255) NOT NULL  COMMENT '匹配关键词',
-    `VideoLink` VARCHAR(10) NOT NULL  COMMENT '视频链接',
-    `group_name_id` INT NOT NULL,
-    CONSTRAINT `fk_replytag_groupmod_b310a1f0` FOREIGN KEY (`group_name_id`) REFERENCES `groupmodel` (`id`) ON DELETE CASCADE
+    `word` JSON NOT NULL  COMMENT '匹配关键词',
+    `VideoLink` LONGTEXT NOT NULL  COMMENT '视频链接',
+    `group_id_id` INT NOT NULL,
+    CONSTRAINT `fk_replytag_groupmod_267afc23` FOREIGN KEY (`group_id_id`) REFERENCES `groupmodel` (`id`) ON DELETE CASCADE
 ) CHARACTER SET utf8mb4;
 CREATE TABLE IF NOT EXISTS `voicemodel` (
     `id` INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
