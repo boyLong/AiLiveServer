@@ -12,7 +12,7 @@
 """
 
 from typing import Optional
-
+from datetime import datetime
 from pydantic import BaseModel, EmailStr, AnyHttpUrl
 
 
@@ -20,8 +20,14 @@ from pydantic import BaseModel, EmailStr, AnyHttpUrl
 class UserLoginBase(BaseModel):
     username: int = None
     password: str = None
+    device_id: str
 
 
-class TokenModel(BaseModel):
-    token: str = None
 
+class UserInfoBase(BaseModel):
+    '"id","username",  "is_allow","created_at","updated_at","Expire_at"'
+    id: int
+    username: int=None
+    is_allow: bool=False
+    created_at: Optional[datetime]=None
+    Expire_at: Optional[datetime]=None

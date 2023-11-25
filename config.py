@@ -7,7 +7,7 @@ TORTOISE_ORM = {
     "connections": {"default": "mysql://root:981022989aa92fc0@82.156.5.141:3306/ailive"},
     "apps": {
         "models": {
-            "models": ["models.user", "aerich.models"],
+            "models": ["models.user","models.videos", "aerich.models"],
             "default_connection": "default",
         },
     },

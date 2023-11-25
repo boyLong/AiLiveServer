@@ -1,15 +1,10 @@
 from typing import Optional
-from datetime import datetime
+
 from typing import List, Optional,Union
 from pydantic import BaseModel, EmailStr, AnyHttpUrl
-
-class UserInfoBase(BaseModel):
-    '"id","username",  "is_allow","created_at","updated_at","Expire_at"'
-    id: int
-    username: int=None
-    is_allow: bool=False
-    created_at: Optional[datetime]=None
-    Expire_at: Optional[datetime]=None
+from tortoise.contrib.pydantic import pydantic_model_creator
+from schemas.User import UserInfoBase
+from models.videos import GroupModel
 
 
 # Shared properties

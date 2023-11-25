@@ -7,6 +7,8 @@ from config import SECRET_KEY,ALGORITHM
 from pydantic import ValidationError
 from models.user import UserModel
 
+
+device_info = {}
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
@@ -43,6 +45,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
         expire = datetime.utcnow() + timedelta(minutes=15)
     # 添加失效时间
     to_encode.update({"exp": expire})
+    device_info[to_encode["sub"]] = to_encode["device_id"]
     # SECRET_KEY：密钥
     # ALGORITHM：JWT令牌签名算法
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
@@ -57,9 +60,6 @@ async def check_jwt_token(token: Optional[str] = Header("")):
     """
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
-        username: str = payload.get("sub")
-        # 通过解析得到的username,获取用户信息,并返回
-        return await UserModel.filter(username=username).first().values("id","username",  "is_allow","created_at","Expire_at")
  
     except Exception as e:
         print(e)
@@ -72,3 +72,17 @@ async def check_jwt_token(token: Optional[str] = Header("")):
                 'data': "Token Error",
             }
         )
+    username: str = payload.get("sub")
+    device_id: str = payload.get("device_id")
+    
+    if device_id != device_info.get(username):
+        raise HTTPException(
+            status_code=401,
+            detail={
+                'code': 5000,
+                'message': "登录过期",
+                'data': "登录过期",
+            }
+        )
+    # 通过解析得到的username,获取用户信息,并返回
+    return await UserModel.filter(username=username).first().values("id","username",  "is_allow","created_at","Expire_at")

@@ -41,6 +41,7 @@ async def register(user: UserLoginBase):
 
 @router.post("/login",response_model=ResponseBase,response_model_include=["status","msg", "token"])
 async def login_for_access_token(user: UserLoginBase):
+    device_id = user.device_id
     user =await check_user(user.username, user.password)
     if not user:
         return {"status":STATUS.ERROR,"msg": "用户名密码错误","token": ''} 
@@ -49,7 +50,7 @@ async def login_for_access_token(user: UserLoginBase):
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     # 把id进行username加密，要使用str类型
     access_token = create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires
+        data={"sub": user.username,"device_id":device_id}, expires_delta=access_token_expires
     )
 
     return {"status":STATUS.SUCCESS,"msg": "登录成功","token": access_token}

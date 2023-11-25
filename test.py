@@ -1,19 +1,21 @@
 import requests
 
-r = requests.post("http://127.0.0.1:8000/user/register",json={
+r = requests.post("http://127.0.0.1:8000/api/user/register",json={
     "username": 1231222223,
-    "password": "asddsa"
+    "password": "asddsa",
+    "device_id": ''
 })
 
 print(r.text)
 
 
-# r = requests.post("http://127.0.0.1:8000/user/login",json={
-#     "username": 1231223,
-#     "password": "assa"
-# })
+r = requests.post("http://127.0.0.1:8000/api/user/login",json={
+    "username": 1231222223,
+    "password": "asddsa",
+    "device_id": '5'
+})
 
-# print(r.text)
+print(r.text)
 
-# r = requests.get("http://127.0.0.1:8000/user/info",headers={"token":"eybGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEyMzEyMjMsImV4cCI6MTcwMTI3ODc1OX0.c_1MRnAD3OFgULA7EQ9W91a3An3LHm681tg6kMtZzFc"}).text
-# print(r)
+r = requests.get("http://127.0.0.1:8000/api/user/info",headers={'token':"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEyMzEyMjIyMjMsImRldmljZV9pZCI6IjMiLCJleHAiOjE3MDA5MjM5MzN9.9Pr2tU5GLcwcSk9nl50ZIBSO4lp5w-_hef_skIy2aHg"}).text
+print(r)
