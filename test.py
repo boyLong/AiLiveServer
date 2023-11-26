@@ -9,13 +9,13 @@ import requests
 # print(r.text)
 
 
-# r = requests.post("http://82.156.5.141:8000/api/user/login",json={
-#     "username": 1231222223,
-#     "password": "asddsa",
-#     "device_id": '5'
-# })
+r = requests.post("http://82.156.5.141:8000/api/user/login",json={
+    "username": 1231222223,
+    "password": "asddsa",
+    "device_id": '5'
+})
 
-# print(r.text)
+print(r.text)
 
 # r = requests.post("http://82.156.5.141:8000/api/video/add_word",
 #                  json={
@@ -42,9 +42,9 @@ import requests
 
 r = requests.post("http://82.156.5.141:8000/api/video/add_tag",json={
     "tag_name": "米饭",
-    "keysword": ["啥","吃"],
+    "keywords": ["啥","吃"],
     "group_id":  2,
-    "VideoLink": "http://www.baidu.com"
+    "voice_link": "http://www.baidu.com"
 },
  headers={'token':"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEyMzEyMjIyMjMsImRldmljZV9pZCI6IjUiLCJleHAiOjE3MDEwMjI1OTV9.XWXYFxzQVzhayNrykyKZTtrq6t5ZYe-RITiBTJj7TtE"}
 
