@@ -22,7 +22,7 @@ async def add_group(group: GroupReqSchemas, user: UserInfoBase = Depends(check_j
 @router.get("/group",dependencies=[Depends(check_jwt_token)], )
 async def group(user: UserInfoBase = Depends(check_jwt_token)):
     """查询组"""
-    user = await UserModel(id=user["id"]).first()
+    user = await UserModel.filter(id=user["id"]).first()
     groups = await GroupModel.filter(user=user).all()
     return {"status":STATUS.SUCCESS,"msg": "查询成功","data":groups}
 
@@ -51,7 +51,7 @@ async def add_tag(tag: TagReqSchemas, user: UserInfoBase = Depends(check_jwt_tok
                                            keywords=tag.keywords)
     return {"status":STATUS.SUCCESS,"msg": "添加成功"}
 
-@router.get("/tag/group_id={group_id}",dependencies=[Depends(check_jwt_token)])
+@router.get("/tag?group_id={group_id}",dependencies=[Depends(check_jwt_token)])
 async def query_tag( group_id:int,user: UserInfoBase = Depends(check_jwt_token)):
     """
     查询组下面的语音

@@ -22,5 +22,5 @@ class STATUS:
     SUCCESS = 200
 
 
-FILE_PATH = "/ai-data"
-# FILE_PATH = r"C:/Users/13106\Desktop/app"
+# FILE_PATH = "/ai-data"
+FILE_PATH = r"C:/Users/13106\Desktop/app"

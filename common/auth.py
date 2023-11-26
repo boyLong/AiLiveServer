@@ -89,3 +89,11 @@ async def check_jwt_token(request: Request, token: Optional[str] = Header("") ):
         return user
     if user['Expire_at'].timestamp()>datetime.now().timestamp():
         return await UserModel.filter(username=username).first().values("id","username",  "is_allow","created_at", "Expire_at")
+    raise HTTPException(
+            status_code=401,
+            detail={
+                'code': 5000,
+                'message': "请先激活",
+                'data': "请先激活",
+            }
+        ) 
