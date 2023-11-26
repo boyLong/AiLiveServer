@@ -13,15 +13,13 @@ class GroupModel(Model):
     id = fields.IntField(pk=True, index=True)
     
     groupName = fields.CharField(max_length=255,)
-    # Word = fields.CharEnumField
     user = fields.ForeignKeyField("models.UserModel",on_delete=fields.CASCADE,related_name="group_user")
 
 class ReplyTagModel(Model):
     id = fields.IntField(pk=True, index=True)
-    tag = fields.CharField(max_length=255,)
-    category = fields.CharField(max_length=255,)
-    word = fields.JSONField(description="匹配关键词")
-    VideoLink = fields.TextField(description="视频链接")
+    tag_name = fields.CharField(max_length=255,)
+    keywords = fields.JSONField(description="匹配关键词")
+    voice_link = fields.TextField(description="视频链接")
     group_id = fields.ForeignKeyField("models.GroupModel", on_delete=fields.CASCADE,related_name="group_id")
 
 

@@ -42,7 +42,7 @@ async def add_tag(tag: TagReqSchemas, user: UserInfoBase = Depends(check_jwt_tok
     group_id = await GroupModel(id=tag.group_id,user=user).first()
     print(group_id)
 
-    core_suer = await ReplyTagModel.create(group_id=group_id,tag=tag.tag,category=tag.category,VideoLink=tag.VideoLink,word=tag.word)
+    core_suer = await ReplyTagModel.create(group_id=group_id,tag=tag.tag_name,VideoLink=tag.video_name,keywords=tag.keywords)
     return {"status":STATUS.SUCCESS,"msg": "添加成功"}
 
 @router.get("/tag/group_id={group_id}",dependencies=[Depends(check_jwt_token)])
@@ -76,7 +76,7 @@ async def add_word(tag: TagWordReqSchemas, user: UserInfoBase = Depends(check_jw
     res = await ReplyTagModel.filter(id=tag.tag_id,group_id=group_id).first()
     if not res:
         return {"status":STATUS.ERROR,"msg": "标签不存在"}
-    res.word.append(tag.word)
+    res.keywords.append(tag.word)
     await res.save()
     return {"status":STATUS.SUCCESS,"msg": "添加成功"}
 

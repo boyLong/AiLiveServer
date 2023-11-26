@@ -30,8 +30,7 @@ class TagWordReqSchemas(BaseModel):
     word: str
 
 class TagReqSchemas(BaseModel):
-    tag: str
-    category: str
-    word: list
+    tag_name: str
+    keywords: list
     group_id: int
-    VideoLink: AnyHttpUrl
+    video_name: AnyHttpUrl

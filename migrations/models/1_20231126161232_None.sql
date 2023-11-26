@@ -16,10 +16,9 @@ CREATE TABLE IF NOT EXISTS `groupmodel` (
 ) CHARACTER SET utf8mb4;
 CREATE TABLE IF NOT EXISTS `replytagmodel` (
     `id` INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    `tag` VARCHAR(255) NOT NULL,
-    `category` VARCHAR(255) NOT NULL,
-    `word` JSON NOT NULL  COMMENT '匹配关键词',
-    `VideoLink` LONGTEXT NOT NULL  COMMENT '视频链接',
+    `tag_name` VARCHAR(255) NOT NULL,
+    `keywords` JSON NOT NULL  COMMENT '匹配关键词',
+    `voice_link` LONGTEXT NOT NULL  COMMENT '视频链接',
     `group_id_id` INT NOT NULL,
     CONSTRAINT `fk_replytag_groupmod_267afc23` FOREIGN KEY (`group_id_id`) REFERENCES `groupmodel` (`id`) ON DELETE CASCADE
 ) CHARACTER SET utf8mb4;
