@@ -7,7 +7,6 @@ from schemas.Response import ResponseBase,UserInfoBase
 from models.user import UserModel
 from models.videos import GroupModel,ReplyTagModel
 from config import STATUS, FILE_PATH
-from models.videos import ReplyTagModel
 from common.auth import create_access_token,verify_password,get_password_hash,check_jwt_token
 
 router = APIRouter()
@@ -41,11 +40,11 @@ async def add_tag(tag: TagReqSchemas, user: UserInfoBase = Depends(check_jwt_tok
     print(tag)
     print(user["id"])
     user = await UserModel.filter(id=user["id"]).first()
-    group_id = await GroupModel.filter(id=tag.group_id,user=user).first()
-    if not group_id or not user:
+    group = await GroupModel.filter(id=tag.group_id,user=user).first()
+    if not group or not user:
         return {"status":STATUS.ERROR,"msg": "信息不存在,无法创建"}
 
-    core_suer = await ReplyTagModel.create(group_id=group_id,
+    core_suer = await ReplyTagModel.create(group=group,
                                            tag_name=tag.tag_name,
                                            voice_link=tag.voice_link,
                                            keywords=tag.keywords)
@@ -57,10 +56,10 @@ async def query_tag( group_id:int,user: UserInfoBase = Depends(check_jwt_token))
     查询组下面的语音
     """
     user = await UserModel.filter(id=user["id"]).first()
-    group_id = await GroupModel.filter(id=group_id,user=user).first()
-    if not group_id or not user:
+    group = await GroupModel.filter(id=group_id,user=user).first()
+    if not group or not user:
         return {"status":STATUS.ERROR,"msg": "信息不存在,无法查询"}
-    tags =await ReplyTagModel.filter(group_id=group_id).all()
+    tags =await ReplyTagModel.filter(group=group).all()
 
     return {"status":STATUS.SUCCESS,"msg": "查询成功","data":tags}
     
@@ -70,11 +69,11 @@ async def add_group(tag: TagDelReqSchemas, user: UserInfoBase = Depends(check_jw
     删除组的语音
     """
     user = await UserModel.filter(id=user["id"]).first()
-    group_id = await GroupModel.filter(id=tag.group_id,user=user).first()
-    if not group_id or not user:
+    group = await GroupModel.filter(id=tag.group_id,user=user).first()
+    if not group or not user:
         return {"status":STATUS.ERROR,"msg": "信息不存在,无法删除"}
 
-    res = await ReplyTagModel.filter(id=tag.tag_id,group_id=group_id).delete()
+    res = await ReplyTagModel.filter(id=tag.tag_id,group=group).delete()
     return {"status":STATUS.SUCCESS,"msg": "删除成功"}
 
 @router.post("/add_word",dependencies=[Depends(check_jwt_token)], response_model=ResponseBase,response_model_include=["status","msg"])
@@ -82,8 +81,8 @@ async def add_word(tag: TagWordReqSchemas, user: UserInfoBase = Depends(check_jw
     """添加匹配关键词
     """
     user = await UserModel.filter(id=user["id"]).first()
-    group_id = await GroupModel.filter(id=tag.group_id,user=user).first()
-    res = await ReplyTagModel.filter(id=tag.tag_id,group_id=group_id).first()
+    group = await GroupModel.filter(id=tag.group_id,user=user).first()
+    res = await ReplyTagModel.filter(id=tag.tag_id,group=group).first()
     if not res:
         return {"status":STATUS.ERROR,"msg": "标签不存在"}
     res.keywords.append(tag.word)

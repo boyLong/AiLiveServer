@@ -21,7 +21,7 @@ class ReplyTagModel(Model):
     tag_name = fields.CharField(max_length=255,)
     keywords = fields.JSONField(description="匹配关键词")
     voice_link = fields.TextField(description="视频链接")
-    group_id = fields.ForeignKeyField("models.GroupModel", on_delete=fields.CASCADE,related_name="group_id")
+    group = fields.ForeignKeyField("models.GroupModel", on_delete=fields.CASCADE,related_name="group_id")
 
     class Meta:
         table = "Reply_Tag"  # 数据库中的表名称
