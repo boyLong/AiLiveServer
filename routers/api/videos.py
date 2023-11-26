@@ -55,6 +55,8 @@ async def query_tag( group_id=Query(None), user: UserInfoBase = Depends(check_jw
     """
     查询组下面的语音
     """
+    if not group_id:
+        return {"status":STATUS.ERROR,"msg": "参数不全","data":tags}
     user = await UserModel.filter(id=user["id"]).first()
     group = await GroupModel.filter(id=group_id,user=user).first()
     if not group or not user:
