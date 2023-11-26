@@ -40,7 +40,7 @@ async def add_tag(tag: TagReqSchemas, user: UserInfoBase = Depends(check_jwt_tok
     print(user["id"])
     user = await UserModel(id=user["id"]).first()
     group_id = await GroupModel(id=tag.group_id,user=user).first()
-    if not group_id or user:
+    if not group_id or not user:
         return {"status":STATUS.ERROR,"msg": "信息不存在,无法创建"}
 
     core_suer = await ReplyTagModel.create(group_id=group_id,
@@ -56,7 +56,7 @@ async def query_tag( group_id:int,user: UserInfoBase = Depends(check_jwt_token))
     """
     user = await UserModel(id=user["id"]).first()
     group_id = await GroupModel(id=group_id,user=user).first()
-    if not group_id or user:
+    if not group_id or not user:
         return {"status":STATUS.ERROR,"msg": "信息不存在,无法查询"}
     tags =await ReplyTagModel.filter(group_id=group_id).all()
 
@@ -69,7 +69,7 @@ async def add_group(tag: TagDelReqSchemas, user: UserInfoBase = Depends(check_jw
     """
     user = await UserModel(id=user["id"]).first()
     group_id = await GroupModel(id=tag.group_id,user=user).first()
-    if not group_id or user:
+    if not group_id or not user:
         return {"status":STATUS.ERROR,"msg": "信息不存在,无法删除"}
 
     res = await ReplyTagModel.filter(id=tag.tag_id,group_id=group_id).delete()
