@@ -33,4 +33,4 @@ class TagReqSchemas(BaseModel):
     tag_name: str
     keywords: list
     group_id: int
-    video_name: AnyHttpUrl
+    voice_link: AnyHttpUrl

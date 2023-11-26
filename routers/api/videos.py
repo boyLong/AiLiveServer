@@ -42,7 +42,10 @@ async def add_tag(tag: TagReqSchemas, user: UserInfoBase = Depends(check_jwt_tok
     group_id = await GroupModel(id=tag.group_id,user=user).first()
     print(group_id)
 
-    core_suer = await ReplyTagModel.create(group_id=group_id,tag=tag.tag_name,VideoLink=tag.video_name,keywords=tag.keywords)
+    core_suer = await ReplyTagModel.create(group_id=group_id,
+                                           tag_name=tag.tag_name,
+                                           voice_link=tag.voice_link,
+                                           keywords=tag.keywords)
     return {"status":STATUS.SUCCESS,"msg": "添加成功"}
 
 @router.get("/tag/group_id={group_id}",dependencies=[Depends(check_jwt_token)])
