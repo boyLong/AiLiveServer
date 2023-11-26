@@ -20,3 +20,7 @@ TORTOISE_ORM = {
 class STATUS:
     ERROR = 500
     SUCCESS = 200
+
+
+FILE_PATH = "/ai-data"
+# FILE_PATH = r"C:/Users/13106\Desktop/app"

@@ -1,6 +1,8 @@
 
 
 from fastapi import Depends, FastAPI, Header, HTTPException
+from config import FILE_PATH
+from fastapi.staticfiles import StaticFiles
 from tortoise.contrib.fastapi import register_tortoise
 from config import TORTOISE_ORM
 from routers.api import user,videos
@@ -24,3 +26,5 @@ async def get_token_header(x_token: str = Header(...)):
 app.include_router(user.router, prefix="/api/user",tags=["用户"])
 
 app.include_router(videos.router, prefix="/api/video",tags=["视频"])
+
+app.mount("/static", StaticFiles(directory=FILE_PATH), name="static")

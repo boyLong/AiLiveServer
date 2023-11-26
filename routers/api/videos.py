@@ -1,10 +1,12 @@
-from fastapi import APIRouter,Depends
+import uuid
+import aiofiles 
+from fastapi import APIRouter,Depends,UploadFile,File
 from datetime import timedelta
 from schemas.Videos import GroupSchemas,GroupReqSchemas,GroupDelReqSchemas,TagReqSchemas,TagDelReqSchemas,TagWordReqSchemas
 from schemas.Response import ResponseBase,UserInfoBase
 from models.user import UserModel
 from models.videos import GroupModel,ReplyTagModel
-from config import STATUS
+from config import STATUS, FILE_PATH
 from models.videos import ReplyTagModel
 from common.auth import create_access_token,verify_password,get_password_hash,check_jwt_token
 
@@ -89,3 +91,13 @@ async def add_word(tag: TagWordReqSchemas, user: UserInfoBase = Depends(check_jw
     return {"status":STATUS.SUCCESS,"msg": "添加成功"}
 
 
+
+@router.post("/upload")
+async def upload_voice(file: UploadFile = File(...)):
+    try:
+        filename = f"/voice/{uuid.uuid4()}-{file.filename}"
+        async with aiofiles.open(FILE_PATH + filename, 'wb') as w:
+            await w.write(await file.read() )
+        return {"status": STATUS.SUCCESS, "msg": "上传成功","voice_link": "/static"+ filename}
+    except:
+        return {"status": STATUS.ERROR, "msg": "上传失败","voice_link":""}
