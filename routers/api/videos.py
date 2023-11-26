@@ -51,7 +51,7 @@ async def add_tag(tag: TagReqSchemas, user: UserInfoBase = Depends(check_jwt_tok
     return {"status":STATUS.SUCCESS,"msg": "添加成功"}
 
 @router.get("/tag",dependencies=[Depends(check_jwt_token)])
-async def query_tag( group_id:Query(None),user: UserInfoBase = Depends(check_jwt_token)):
+async def query_tag( group_id=Query(None), user: UserInfoBase = Depends(check_jwt_token)):
     """
     查询组下面的语音
     """
