@@ -1,6 +1,6 @@
 import uuid
 import aiofiles 
-from fastapi import APIRouter,Depends,UploadFile,File
+from fastapi import APIRouter,Depends,UploadFile,File,Query
 from datetime import timedelta
 from schemas.Videos import GroupSchemas,GroupReqSchemas,GroupDelReqSchemas,TagReqSchemas,TagDelReqSchemas,TagWordReqSchemas
 from schemas.Response import ResponseBase,UserInfoBase
@@ -50,8 +50,8 @@ async def add_tag(tag: TagReqSchemas, user: UserInfoBase = Depends(check_jwt_tok
                                            keywords=tag.keywords)
     return {"status":STATUS.SUCCESS,"msg": "添加成功"}
 
-@router.get("/tag?group_id={group_id}",dependencies=[Depends(check_jwt_token)])
-async def query_tag( group_id:int,user: UserInfoBase = Depends(check_jwt_token)):
+@router.get("/tag",dependencies=[Depends(check_jwt_token)])
+async def query_tag( group_id:Query(1),user: UserInfoBase = Depends(check_jwt_token)):
     """
     查询组下面的语音
     """
