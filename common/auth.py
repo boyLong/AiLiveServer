@@ -1,6 +1,6 @@
 import jwt
 from typing import Optional
-from fastapi import Header,HTTPException
+from fastapi import Header,HTTPException, Request
 from datetime import datetime,timedelta
 from passlib.context import CryptContext
 from config import SECRET_KEY,ALGORITHM
@@ -52,7 +52,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     return encoded_jwt
 
 
-async def check_jwt_token(token: Optional[str] = Header("")):
+async def check_jwt_token(request: Request, token: Optional[str] = Header("") ):
     """
     验证token
     :param token:
@@ -60,10 +60,7 @@ async def check_jwt_token(token: Optional[str] = Header("")):
     """
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
- 
     except Exception as e:
-        print(e)
-        print(e.args)
         raise HTTPException(
             status_code=401,
             detail={
@@ -74,7 +71,6 @@ async def check_jwt_token(token: Optional[str] = Header("")):
         )
     username: str = payload.get("sub")
     device_id: str = payload.get("device_id")
-    print
     if device_id != device_info.get(username):
         print(device_id,device_info)
         raise HTTPException(
@@ -86,4 +82,10 @@ async def check_jwt_token(token: Optional[str] = Header("")):
             }
         )
     # 通过解析得到的username,获取用户信息,并返回
-    return await UserModel.filter(username=username).first().values("id","username",  "is_allow","created_at","Expire_at")
+    url = request.url.path
+    print(url)
+    user = await UserModel.filter(username=username).first().values("id","username",  "is_allow","created_at", "Expire_at")
+    if "/api/user/activate" == url or "/info" == url:
+        return user
+    if user['Expire_at'].timestamp()>datetime.now().timestamp():
+        return await UserModel.filter(username=username).first().values("id","username",  "is_allow","created_at", "Expire_at")

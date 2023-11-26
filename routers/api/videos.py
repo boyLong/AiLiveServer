@@ -15,7 +15,7 @@ router = APIRouter()
 @router.post("/add_group",dependencies=[Depends(check_jwt_token)], response_model=ResponseBase,response_model_include=["status","msg"])
 async def add_group(group: GroupReqSchemas, user: UserInfoBase = Depends(check_jwt_token)):
     """添加组"""
-    user = await UserModel(id=user["id"]).first()
+    user = await UserModel.filter(id=user["id"]).first()
     core_suer = await GroupModel.create(user=user,groupName=group.name)
     return {"status":STATUS.SUCCESS,"msg": "添加成功"}
 
@@ -40,8 +40,8 @@ async def add_tag(tag: TagReqSchemas, user: UserInfoBase = Depends(check_jwt_tok
     """添加标签"""
     print(tag)
     print(user["id"])
-    user = await UserModel(id=user["id"]).first()
-    group_id = await GroupModel(id=tag.group_id,user=user).first()
+    user = await UserModel.filter(id=user["id"]).first()
+    group_id = await GroupModel.filter(id=tag.group_id,user=user).first()
     if not group_id or not user:
         return {"status":STATUS.ERROR,"msg": "信息不存在,无法创建"}
 
@@ -56,8 +56,8 @@ async def query_tag( group_id:int,user: UserInfoBase = Depends(check_jwt_token))
     """
     查询组下面的语音
     """
-    user = await UserModel(id=user["id"]).first()
-    group_id = await GroupModel(id=group_id,user=user).first()
+    user = await UserModel.filter(id=user["id"]).first()
+    group_id = await GroupModel.filter(id=group_id,user=user).first()
     if not group_id or not user:
         return {"status":STATUS.ERROR,"msg": "信息不存在,无法查询"}
     tags =await ReplyTagModel.filter(group_id=group_id).all()
@@ -69,8 +69,8 @@ async def add_group(tag: TagDelReqSchemas, user: UserInfoBase = Depends(check_jw
     """
     删除组的语音
     """
-    user = await UserModel(id=user["id"]).first()
-    group_id = await GroupModel(id=tag.group_id,user=user).first()
+    user = await UserModel.filter(id=user["id"]).first()
+    group_id = await GroupModel.filter(id=tag.group_id,user=user).first()
     if not group_id or not user:
         return {"status":STATUS.ERROR,"msg": "信息不存在,无法删除"}
 
@@ -81,8 +81,8 @@ async def add_group(tag: TagDelReqSchemas, user: UserInfoBase = Depends(check_jw
 async def add_word(tag: TagWordReqSchemas, user: UserInfoBase = Depends(check_jwt_token)):
     """添加匹配关键词
     """
-    user = await UserModel(id=user["id"]).first()
-    group_id = await GroupModel(id=tag.group_id,user=user).first()
+    user = await UserModel.filter(id=user["id"]).first()
+    group_id = await GroupModel.filter(id=tag.group_id,user=user).first()
     res = await ReplyTagModel.filter(id=tag.tag_id,group_id=group_id).first()
     if not res:
         return {"status":STATUS.ERROR,"msg": "标签不存在"}

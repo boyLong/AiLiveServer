@@ -1,10 +1,14 @@
+import datetime
 from fastapi import APIRouter,Depends
 from datetime import timedelta
-from schemas.User import UserLoginBase,UserRegisterBase
+from schemas.User import UserLoginBase,UserRegisterBase,EXCodeBase,EXBase
 from schemas.Response import ResponseBase,UserInfoBase
 from config import ACCESS_TOKEN_EXPIRE_MINUTES,STATUS
 from common.auth import create_access_token,verify_password,get_password_hash,check_jwt_token
-from models.user import UserModel
+from models.user import UserModel,ExCodeModel
+import uuid 
+from tortoise import transactions
+
 router = APIRouter()
 async def check_user(username, password,):
     """
@@ -58,17 +62,52 @@ async def login_for_access_token(user: UserLoginBase):
 
 @router.get("/info", dependencies=[Depends(check_jwt_token)],response_model=ResponseBase, response_model_include=["status","msg","user"])
 async def get_projects(*, user: UserInfoBase = Depends(check_jwt_token)):
-    print(user)
     return {"status": STATUS.SUCCESS, "msg":"成功", "user": user}
 
 
 
 
-# @router.post("/activate")
-# async def get_projects(*, user: UserBase = Depends(check_jwt_token)):
 
-#     return {
-#             "status": STATUS.SUCCESS,
-#             "msg": "成功",
-#             "data": user
-#         }
+@router.post("/activate",dependencies=[Depends(check_jwt_token)],response_model=ResponseBase, response_model_include=["status","msg","user"])
+async def activate(*,ExCode: EXCodeBase, user: UserInfoBase = Depends(check_jwt_token)):
+    ex_code = ExCode.ex_code
+
+    ex_code = await ExCodeModel.filter(code=ex_code).first()
+    if ex_code.used:
+
+
+        return {
+            "status": STATUS.ERROR,
+            "msg": "兑换码已使用",
+            "user": user
+        }
+    ex_time = ex_code.ex_time
+
+    async with transactions.in_transaction():
+        user = await UserModel.filter(id=user["id"]).first()
+        expire_at = user.Expire_at
+        expire_at = expire_at + datetime.timedelta(ex_time)
+        user.Expire_at = expire_at
+        await user.save()
+        ex_code.used=True
+        await ex_code.save()
+  
+    return {
+            "status": STATUS.SUCCESS,
+            "msg": "成功",
+            "user": user
+        }
+
+@router.post("/generate_code",dependencies=[Depends(check_jwt_token)],response_model=ResponseBase, response_model_include=["status","msg","data"])
+async def get_projects(*,ex: EXBase, user: UserInfoBase = Depends(check_jwt_token)):
+    code = uuid.uuid4().hex
+    user = await UserModel.filter(id=user["id"]).first()
+    ex_code = ExCodeModel(ex_time=ex.ex_time, code=code, remark=ex.remark,user=user)
+    await ex_code.save()
+    return {
+        "msg": "创建成功",
+        "status": STATUS.SUCCESS,
+        "data":{
+            "code": code
+        }
+    }

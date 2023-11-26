@@ -36,3 +36,9 @@ class UserInfoBase(BaseModel):
     is_allow: bool=False
     created_at: Optional[datetime]=None
     Expire_at: Optional[datetime]=None
+
+class EXBase(BaseModel):
+    ex_time: int
+    remark: str=""
+class EXCodeBase(BaseModel):
+    ex_code: str
