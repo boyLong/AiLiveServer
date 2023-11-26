@@ -23,4 +23,4 @@ class STATUS:
 
 
 FILE_PATH = "/ai-data"
-FILE_PATH = r"C:/Users/13106\Desktop/app"
+# FILE_PATH = r"C:/Users/13106\Desktop/app"
