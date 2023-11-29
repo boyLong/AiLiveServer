@@ -23,7 +23,7 @@ async def live_info(live: LiveBase, user: UserInfoBase = Depends(check_jwt_token
     if not url:
         return {"status":STATUS.ERROR,"msg": "直播间地址解析失败"}
     try:
-        dy = DySPider(userAgent=live.UserAgent,url=url)
+        dy = DySPider(userAgent=live.UserAgent,url=url[0])
         info = await dy.info()
     except Exception as e:
         print(e)
