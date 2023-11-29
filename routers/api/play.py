@@ -25,9 +25,9 @@ async def live_info(live: LiveBase, user: UserInfoBase = Depends(check_jwt_token
     try:
         dy = DySPider(userAgent=live.UserAgent,url=url)
         info = await dy.info()
-    except:
-        
-        return {"status":STATUS.ERROR,"msg": "系统出错,请重试"}
+    except Exception as e:
+        print(e)
+        return {"status":STATUS.ERROR,"msg": "系统出错,请重试",}
     return {"status":STATUS.SUCCESS,"msg": "成功", "data": info}
 
 
