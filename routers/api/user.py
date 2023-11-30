@@ -35,20 +35,20 @@ async def register(user: UserRegisterBase):
     """
     if await UserModel.filter(username=user.username).first():
         
-        return {"status":STATUS.ERROR,"msg": "账号已存在","data":{}}
+        return {"status":STATUS.ERROR,"msg": "账号已存在" }
     password_hash = get_password_hash(user.password)
     core_suer = await UserModel.create(username=user.username,password=password_hash)
-    return {"status":STATUS.SUCCESS,"msg": "注册成功","data":{}}
+    return {"status":STATUS.SUCCESS,"msg": "注册成功" }
 
 
 
 
-@router.post("/login",response_model=ResponseBase,response_model_include=["status","msg", "token"])
+@router.post("/login",response_model=ResponseBase,response_model_include=["status","msg", "token","data"])
 async def login_for_access_token(user: UserLoginBase):
     device_id = user.device_id
     user =await check_user(user.username, user.password)
     if not user:
-        return {"status":STATUS.ERROR,"msg": "用户名密码错误","token": ''} 
+        return {"status":STATUS.ERROR,"msg": "用户名密码错误","token": '',"data":{}} 
    
     # 过期时间
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -56,8 +56,14 @@ async def login_for_access_token(user: UserLoginBase):
     access_token = create_access_token(
         data={"sub": user.username,"device_id":device_id}, expires_delta=access_token_expires
     )
+    quota=(user.Expire_at.replace(tzinfo=None)-datetime.datetime.now()).days
+    if quota<0:
+        quota = 0
 
-    return {"status":STATUS.SUCCESS,"msg": "登录成功","token": access_token}
+    return {"status":STATUS.SUCCESS,"msg": "登录成功","token": access_token,"data":{"username": user.username,"is_allow": user.is_allow, 
+                                                                                "quota": quota,
+                                                                                "expire_time":user.Expire_at.strftime("%Y-%m-%d %H:%M:%S"),
+                                                                                "create_time":user.created_at.strftime("%Y-%m-%d %H:%M:%S")}}
 
 
 @router.get("/info", dependencies=[Depends(check_jwt_token)],response_model=ResponseBase, response_model_include=["status","msg","user"])
