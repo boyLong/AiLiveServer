@@ -79,6 +79,12 @@ async def activate(*,ExCode: EXCodeBase, user: UserInfoBase = Depends(check_jwt_
     ex_code = ExCode.ex_code
 
     ex_code = await ExCodeModel.filter(code=ex_code).first()
+    if not ex_code:
+        return {
+            "status": STATUS.ERROR,
+            "msg": "兑换码错误",
+            "user": user
+        }
     if ex_code.used:
 
 
