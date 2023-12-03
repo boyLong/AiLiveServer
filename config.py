@@ -1,3 +1,5 @@
+import sys
+
 SECRET_KEY = "eac77e4e9a9a767b792779132e84ea37b1f4c31bec56714607f617a3fbdfbd53"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 10
@@ -22,5 +24,7 @@ class STATUS:
     SUCCESS = 200
 
 
-FILE_PATH = "/ai-data"
-# FILE_PATH = r"C:/Users/13106\Desktop/app"
+if sys.platform == 'win32':
+    FILE_PATH = r"E:\work"
+else:
+    FILE_PATH = r"/ai-data"
