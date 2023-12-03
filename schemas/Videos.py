@@ -39,4 +39,4 @@ class TagReqSchemas(BaseModel):
 class voiceReqSchemas(BaseModel):
     category_id: int = 1
     group_id: int
-    voice_link: AnyHttpUrl
+    voice_link: str
