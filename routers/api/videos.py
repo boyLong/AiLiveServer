@@ -99,7 +99,7 @@ async def upload_voice(request: Request, file: UploadFile = File(...)):
         filename = f"/voice/{uuid.uuid4()}-{file.filename}"
         async with aiofiles.open(FILE_PATH + filename, 'wb') as w:
             await w.write(await file.read() )
-        return {"status": STATUS.SUCCESS, "msg": "上传成功","voice_link": "http://"+request.base_url.hostname+"8000"+"/static"+ filename}
+        return {"status": STATUS.SUCCESS, "msg": "上传成功","voice_link": "http://"+request.base_url.hostname+":8000"+"/static"+ filename}
     except:
         return {"status": STATUS.ERROR, "msg": "上传失败","voice_link":""}
 
