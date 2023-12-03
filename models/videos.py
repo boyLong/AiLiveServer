@@ -30,3 +30,9 @@ class VoiceModel(Model):
     VideosLink = fields.CharField(max_length=255,)
     class Meta:
         table = "voice"  # 数据库中的表名称
+
+class VoiceCategoryModel(Model):
+    id = fields.IntField(pk=True, index=True)
+    group = fields.ForeignKeyField("models.GroupModel", on_delete=fields.CASCADE,related_name="group_Voice")
+    voice_link = fields.TextField(description="视频链接")
+    category = fields.IntField(index=True)

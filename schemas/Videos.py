@@ -34,3 +34,9 @@ class TagReqSchemas(BaseModel):
     keywords: list
     group_id: int
     voice_link: AnyHttpUrl
+
+
+class voiceReqSchemas(BaseModel):
+    category_id: int = 1
+    group_id: int
+    voice_link: AnyHttpUrl

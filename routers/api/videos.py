@@ -1,11 +1,11 @@
 import uuid
 import aiofiles 
-from fastapi import APIRouter,Depends,UploadFile,File,Query
+from fastapi import APIRouter,Depends,UploadFile,File,Query,Request
 from datetime import timedelta
-from schemas.Videos import GroupSchemas,GroupReqSchemas,GroupDelReqSchemas,TagReqSchemas,TagDelReqSchemas,TagWordReqSchemas
+from schemas.Videos import GroupSchemas,GroupReqSchemas,GroupDelReqSchemas,TagReqSchemas,TagDelReqSchemas,TagWordReqSchemas,voiceReqSchemas
 from schemas.Response import ResponseBase,UserInfoBase
 from models.user import UserModel
-from models.videos import GroupModel,ReplyTagModel
+from models.videos import GroupModel,ReplyTagModel,VoiceCategoryModel
 from config import STATUS, FILE_PATH
 from common.auth import create_access_token,verify_password,get_password_hash,check_jwt_token
 
@@ -94,11 +94,33 @@ async def add_word(tag: TagWordReqSchemas, user: UserInfoBase = Depends(check_jw
 
 
 @router.post("/upload")
-async def upload_voice(file: UploadFile = File(...)):
+async def upload_voice(request: Request, file: UploadFile = File(...)):
     try:
         filename = f"/voice/{uuid.uuid4()}-{file.filename}"
         async with aiofiles.open(FILE_PATH + filename, 'wb') as w:
             await w.write(await file.read() )
-        return {"status": STATUS.SUCCESS, "msg": "上传成功","voice_link": "/static"+ filename}
+        return {"status": STATUS.SUCCESS, "msg": "上传成功","voice_link": request.base_url.hostname+"/static"+ filename}
     except:
         return {"status": STATUS.ERROR, "msg": "上传失败","voice_link":""}
+
+@router.post("/add_voice",dependencies=[Depends(check_jwt_token)], response_model=ResponseBase,response_model_include=["status","msg"])
+async def add_voice(voice: voiceReqSchemas, user: UserInfoBase = Depends(check_jwt_token)):
+    """
+    添加组下的分类
+    ["循环播放", "点赞", "欢迎", "关注"]
+    循环播放 : id 1
+    点赞 : id 2
+    欢迎 : id 3
+    关注 : id 4
+    """
+
+    user = await UserModel.filter(id=user["id"]).first()
+    group = await GroupModel.filter(id=voice.group_id, user=user).first()
+
+    if not group or not user:
+        return {"status":STATUS.ERROR,"msg": "信息不存在,无法创建"}
+    await VoiceCategoryModel.create(group=group,
+                                           category=voice.category_id,
+                                           voice_link=voice.voice_link)
+    return {"status":STATUS.SUCCESS,"msg": "添加成功"}
+
